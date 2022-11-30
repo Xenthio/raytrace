@@ -331,7 +331,7 @@ internal class MyRenderHook : RenderHook
 		var surf = tr.Surface.ResourceName;
 		//if (tr.HitPosition.Distance(Light.Position) < 24)
 		//{ 
-			return new Color( 100000.0f ); 
+			//return new Color( 100000.0f ); 
 		//}
 		var t = 0.5f * (tr.Direction.z + 1.0f);
 		var clrv = ((1.0f - t) * new Vector3( 1.0f, 1.0f, 1.0f ) + t * new Vector3( 0.5f, 0.7f, 1.0f )).Clamp( -1, 1 );
