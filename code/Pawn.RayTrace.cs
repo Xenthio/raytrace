@@ -265,7 +265,7 @@ internal class MyRenderHook : RenderHook
 		return new Color( r, g, b, a );
 	}
 
-	Entity Light;
+	//Entity Light;
 	RTResult rt(double x, double y ) 
 	{ 
 		var u = (float)(x) / (image_width - 1);
@@ -273,7 +273,7 @@ internal class MyRenderHook : RenderHook
 
 		var dir = lower_left_corner + u * horizontal + v * vertical;
 
-		if ( Light == null ) Light = Entity.All.OfType<SpotLightEntity>().First();
+		//if ( Light == null ) Light = Entity.All.OfType<SpotLightEntity>().First();
 		var rot = Map.Camera.Rotation;
 		var trn = new Transform( Map.Camera.Position, rot.RotateAroundAxis( Vector3.Left, -90 ).RotateAroundAxis( Vector3.Up, -90 ) );
 		var ray = new Ray( Map.Camera.Position, trn.NormalToWorld( dir ) );
@@ -329,10 +329,10 @@ internal class MyRenderHook : RenderHook
 	{
 
 		var surf = tr.Surface.ResourceName;
-		if (tr.HitPosition.Distance(Light.Position) < 24)
-		{ 
+		//if (tr.HitPosition.Distance(Light.Position) < 24)
+		//{ 
 			return new Color( 100000.0f ); 
-		}
+		//}
 		var t = 0.5f * (tr.Direction.z + 1.0f);
 		var clrv = ((1.0f - t) * new Vector3( 1.0f, 1.0f, 1.0f ) + t * new Vector3( 0.5f, 0.7f, 1.0f )).Clamp( -1, 1 );
 		var myColour = new Color( clrv.x, clrv.y, clrv.z );
