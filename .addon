@@ -23,6 +23,9 @@
     "PerMapRanking": false,
     "LeaderboardType": "None",
     "ProjectTemplate": null,
-    "DefaultLeaderboards": null
+    "DefaultLeaderboards": null,
+    "Summary": "",
+    "Description": "",
+    "Public": true
   }
 }

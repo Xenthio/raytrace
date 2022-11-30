@@ -194,8 +194,8 @@ internal class MyRenderHook : RenderHook
 	Vector3 reflect( Vector3 direction, Vector3 normal ) {
 		return direction - 2*Vector3.Dot( direction, normal ) * normal;
 	}
-	List<int> numbw;
-	List<int> numbh;
+	List<int> numbw = new();
+	List<int> numbh = new();
 	public override void OnStage( SceneCamera target, Stage renderStage )
 	{
 		if ( renderStage == Stage.AfterPostProcess )
@@ -209,12 +209,12 @@ internal class MyRenderHook : RenderHook
 			{
 				for ( int i = 0; i < PIXELS_PER_ITERATION; i++ )
 				{
-					if (numbw.Count == 0)
+					if (numbw.Count == 0 || numbw == null)
 					{
 						numbw = Enumerable.Range( 0, image_width.CeilToInt() ).OrderBy( x => Rand.Int( 0, 100000 ) ).ToList();//GetRandomNumber( 0, image_width.CeilToInt(), image_width.CeilToInt() );
 						 
 					}
-					if ( numbh.Count == 0)
+					if ( numbh.Count == 0 || numbh == null)
 					{
 						numbh = Enumerable.Range( 0, image_height.CeilToInt() ).OrderBy( x => Rand.Int( 0, 100000 ) ).ToList();//GetRandomNumber( 0, image_width.CeilToInt(), image_width.CeilToInt() );
 						 
