@@ -298,6 +298,13 @@ internal class MyRenderHook : RenderHook
 			return p;
 		}
 	}
+	Vector3 random_in_hemisphere( Vector3 normal ) {
+		Vector3 in_unit_sphere = random_in_unit_sphere();
+		if ( Vector3.Dot( in_unit_sphere, normal) > 0.0) // In the same hemisphere as the normal
+			return in_unit_sphere;
+		else
+			return -in_unit_sphere;
+	}
 	TraceResult DoRay( Ray ray, float distch = 0 )
 	{
 		int scale = 3;
@@ -329,10 +336,10 @@ internal class MyRenderHook : RenderHook
 	{
 
 		var surf = tr.Surface.ResourceName;
-		//if (tr.HitPosition.Distance(Light.Position) < 24)
-		//{ 
-			//return new Color( 100000.0f ); 
-		//}
+		if ( tr.Hit && tr.Entity.Tags.Has("emit") )
+		{ 
+			return new Color( 10000.0f ); 
+		}
 		var t = 0.5f * (tr.Direction.z + 1.0f);
 		var clrv = ((1.0f - t) * new Vector3( 1.0f, 1.0f, 1.0f ) + t * new Vector3( 0.5f, 0.7f, 1.0f )).Clamp( -1, 1 );
 		var myColour = new Color( clrv.x, clrv.y, clrv.z );
@@ -370,7 +377,7 @@ internal class MyRenderHook : RenderHook
 		if ( tr.Hit && DoBounce )
 		{
 
-			Vector3 target = tr.HitPosition + tr.Normal + random_in_unit_sphere();
+			Vector3 target = tr.HitPosition + tr.Normal + random_in_unit_sphere();//Vector3.Random;//random_in_hemisphere( tr.Normal);
 			if (surf == "metal" || surf == "metal.sheet" || surf == "glass")
 			{
 				target = tr.HitPosition + reflect(tr.Direction, tr.Normal);
