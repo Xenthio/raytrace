@@ -1,9 +1,5 @@
-﻿using Sandbox;
-using Sandbox.UI.Construct;
-using System;
-using System.IO;
+﻿using System;
 using System.Linq;
-using System.Threading.Tasks;
 
 //
 // You don't need to put things in a namespace, but it doesn't hurt.
@@ -17,7 +13,7 @@ namespace Sandbox;
 /// You can use this to create things like HUDs and declare which player class
 /// to use for spawned players.
 /// </summary>
-public partial class MyGame : Sandbox.Game
+public partial class MyGame : Sandbox.GameManager
 {
 	public MyGame()
 	{
@@ -26,7 +22,7 @@ public partial class MyGame : Sandbox.Game
 	/// <summary>
 	/// A client has joined the server. Make them a pawn to play with
 	/// </summary>
-	public override void ClientJoined( Client client )
+	public override void ClientJoined( IClient client )
 	{
 		base.ClientJoined( client );
 

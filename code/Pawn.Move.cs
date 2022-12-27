@@ -2,12 +2,11 @@
 partial class Pawn
 {
 	void PawnMovement()
-	{ 
-		Rotation = Input.Rotation;
-		EyeRotation = Rotation;
+	{
+		Rotation = ViewAngles.ToRotation();
 
 		// build movement from the input values
-		var movement = new Vector3( Input.Forward, Input.Left, 0 ).Normal;
+		var movement = new Vector3( Input.AnalogMove.x, Input.AnalogMove.y, 0 ).Normal;
 
 		// rotate it to the direction we're facing
 		Velocity = Rotation * movement;
@@ -27,12 +26,12 @@ partial class Pawn
 		// If we're running serverside and Attack1 was just pressed, spawn a ragdoll
 		//if ( IsServer && Input.Pressed( InputButton.PrimaryAttack ) )
 		//{
-			//var ragdoll = new ModelEntity();
-			//ragdoll.SetModel( "models/citizen/citizen.vmdl" );
-			//ragdoll.Position = EyePosition + EyeRotation.Forward * 40;
-			//ragdoll.Rotation = Rotation.LookAt( Vector3.Random.Normal );
-			//ragdoll.SetupPhysicsFromModel( PhysicsMotionType.Dynamic, false );
-			//ragdoll.PhysicsGroup.Velocity = EyeRotation.Forward * 1000;
+		//var ragdoll = new ModelEntity();
+		//ragdoll.SetModel( "models/citizen/citizen.vmdl" );
+		//ragdoll.Position = EyePosition + EyeRotation.Forward * 40;
+		//ragdoll.Rotation = Rotation.LookAt( Vector3.Random.Normal );
+		//ragdoll.SetupPhysicsFromModel( PhysicsMotionType.Dynamic, false );
+		//ragdoll.PhysicsGroup.Velocity = EyeRotation.Forward * 1000;
 		//}
 	}
 }

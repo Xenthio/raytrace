@@ -1,24 +1,21 @@
 ﻿using System;
-using System.Collections.Generic; 
+using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.ConstrainedExecution;
-using System.Runtime.InteropServices;
-using static Sandbox.Easing;
 
 namespace Sandbox;
 partial class Pawn
 {
 	void RTrace()
 	{
-		var hook = Map.Camera.FindOrCreateHook<MyRenderHook>();
-		if (Input.Down(InputButton.PrimaryAttack))
+		var hook = Camera.Main.FindOrCreateHook<MyRenderHook>();
+		if ( Input.Down( InputButton.PrimaryAttack ) )
 		{
-			for (int i = 0; i < 256; i++)
+			for ( int i = 0; i < 256; i++ )
 			{
-				var ray = new Ray( EyePosition + (Vector3.Random * 0.5f), (Vector3.Random * 1) );
+				var ray = new Ray( Position + (Vector3.Random * 0.5f), (Vector3.Random * 1) );
 				var tr = Trace.Ray( ray, 10000 ).Ignore( this ).Run();
-				var myColour = Color.Yellow; 
-				switch (tr.Surface.ResourceName)
+				var myColour = Color.Yellow;
+				switch ( tr.Surface.ResourceName )
 				{
 					case "concrete":
 						myColour = Color.Gray;
@@ -37,12 +34,12 @@ partial class Pawn
 						myColour = Color.FromBytes( 255, 255, 255, 16 );
 						break;
 					case "dirt":
-						myColour = Color.FromBytes(64,32,0);
+						myColour = Color.FromBytes( 64, 32, 0 );
 						break;
 					default:
 						myColour = Color.Yellow;
 						break;
-				} 
+				}
 				DebugOverlay.Line( tr.EndPosition, tr.EndPosition + tr.Normal, myColour, 30 );
 			}
 		}
@@ -50,8 +47,8 @@ partial class Pawn
 		{
 			//Array.Clear( hook.ClrDat, 0, hook.ClrDat.Length );
 			hook.PrevScreen.Dispose();
-			hook.ClrDat = new byte[MyRenderHook.RT_WIDTH.CeilToInt() * MyRenderHook.RT_HEIGHT.CeilToInt() * 4]; 
-			hook.PrevScreen = Texture.Create( MyRenderHook.RT_WIDTH.CeilToInt(), MyRenderHook.RT_HEIGHT.CeilToInt() ).Finish(); 
+			hook.ClrDat = new byte[MyRenderHook.RT_WIDTH.CeilToInt() * MyRenderHook.RT_HEIGHT.CeilToInt() * 4];
+			hook.PrevScreen = Texture.Create( MyRenderHook.RT_WIDTH.CeilToInt(), MyRenderHook.RT_HEIGHT.CeilToInt() ).Finish();
 			//hook.PrevScreen.Update( hook.ClrDat ); 
 			hook.setVars();
 		}
@@ -86,12 +83,12 @@ internal class MyRenderHook : RenderHook
 {
 	public Color MyColour { get; set; } = Color.White;
 	public bool DoClear { get; set; } = true;
-	public bool DoBounce{ get; set; } = false;
-	public bool DoTrace{ get; set; } = false;
-	public bool Iterative{ get; set; } = false; 
+	public bool DoBounce { get; set; } = false;
+	public bool DoTrace { get; set; } = false;
+	public bool Iterative { get; set; } = false;
 
 
-	public Texture PrevScreen = Texture.Create(Screen.Width.FloorToInt(), Screen.Height.FloorToInt()).Finish();
+	public Texture PrevScreen = Texture.Create( Screen.Width.FloorToInt(), Screen.Height.FloorToInt() ).Finish();
 	public byte[] ClrDat = new byte[Screen.Width.FloorToInt() * Screen.Height.FloorToInt() * 4];
 	//public Texture CurScreen = Texture.CreateRenderTarget();
 	RenderAttributes attributes = new();
@@ -150,22 +147,22 @@ internal class MyRenderHook : RenderHook
 		horizontal = new Vector3( viewport_width, 0, 0 );
 		vertical = new Vector3( 0, viewport_height, 0 );
 		lower_left_corner = origin - horizontal / 2 - vertical / 2 - new Vector3( 0, 0, focal_length );
-	} 
+	}
 
-	void DoPixel(int x, int y)
+	void DoPixel( int x, int y )
 	{
 
 		Vector3 SampleColour = Vector3.Zero;
 		bool didonce = false;
-		for (var i = 0; i < SAMPLES_PER_PIXEL; i++)
+		for ( var i = 0; i < SAMPLES_PER_PIXEL; i++ )
 		{
 
 
 
-			double xaa = ((double)x + (Rand.Double( -1, 1 ) / AA_SHARPNESS));
-			double yaa = ((double)y + (Rand.Double( -1, 1 ) / AA_SHARPNESS));
+			double xaa = ((double)x + (Game.Random.Double( -1, 1 ) / AA_SHARPNESS));
+			double yaa = ((double)y + (Game.Random.Double( -1, 1 ) / AA_SHARPNESS));
 			var rttr = rt( xaa, yaa );
-			SampleColour += new Vector3(rttr.HitColour.r.Clamp( 0, 1 ), rttr.HitColour.g.Clamp( 0, 1 ), rttr.HitColour.b.Clamp( 0, 1 ) );
+			SampleColour += new Vector3( rttr.HitColour.r.Clamp( 0, 1 ), rttr.HitColour.g.Clamp( 0, 1 ), rttr.HitColour.b.Clamp( 0, 1 ) );
 		}
 		//var b = rttr.TraceResult.EndPosition.ToScreen();
 		//var bouncedir = 2 * (rttr.TraceResult.Direction.Dot( rttr.TraceResult.Normal )) * rttr.TraceResult.Normal - rttr.TraceResult.Direction;
@@ -177,13 +174,13 @@ internal class MyRenderHook : RenderHook
 		var r = SampleColour.x;
 		var g = SampleColour.y;
 		var b = SampleColour.z;
-		 
+
 		var scale = 1.0f / SAMPLES_PER_PIXEL;
 		r *= scale;
 		g *= scale;
 		b *= scale;
 
-		var correctedColour = new Color( MathF.Sqrt( r ), MathF.Sqrt( g ), MathF.Sqrt( b ), MathF.Sqrt( 1 ) ); 
+		var correctedColour = new Color( MathF.Sqrt( r ), MathF.Sqrt( g ), MathF.Sqrt( b ), MathF.Sqrt( 1 ) );
 		var clr = Color.FromBytes( ClrDat[index], ClrDat[index + 1], ClrDat[index + 2], ClrDat[index + 3] );
 		var newclr = Blend( clr, correctedColour, BLEND_AMOUNT );
 		ClrDat[index] = (byte)(newclr.r * 255);
@@ -191,8 +188,9 @@ internal class MyRenderHook : RenderHook
 		ClrDat[index + 2] = (byte)(newclr.b * 255);
 		ClrDat[index + 3] = (byte)(newclr.a * 255);
 	}
-	Vector3 reflect( Vector3 direction, Vector3 normal ) {
-		return direction - 2*Vector3.Dot( direction, normal ) * normal;
+	Vector3 reflect( Vector3 direction, Vector3 normal )
+	{
+		return direction - 2 * Vector3.Dot( direction, normal ) * normal;
 	}
 	List<int> numbw = new();
 	List<int> numbh = new();
@@ -201,7 +199,7 @@ internal class MyRenderHook : RenderHook
 		if ( renderStage == Stage.AfterPostProcess )
 		{
 			setVars();
-			if (DoClear)Graphics.Clear( true, false );
+			if ( DoClear ) Graphics.Clear( true, false );
 			//numbw = Enumerable.Range( 0, image_width.CeilToInt() ).OrderBy( x => Rand.Int( 0, 1000 ) ).ToList();//GetRandomNumber( 0, image_width.CeilToInt(), image_width.CeilToInt() );
 			//numbh = Enumerable.Range( 0, image_height.CeilToInt() ).OrderBy( x => Rand.Int( 0, 1000 ) ).ToList();//GetRandomNumber( 0, image_height.CeilToInt(), image_height.CeilToInt() );
 			if ( !DoTrace ) return;
@@ -209,15 +207,15 @@ internal class MyRenderHook : RenderHook
 			{
 				for ( int i = 0; i < PIXELS_PER_ITERATION; i++ )
 				{
-					if (numbw.Count == 0 || numbw == null)
+					if ( numbw.Count == 0 || numbw == null )
 					{
-						numbw = Enumerable.Range( 0, image_width.CeilToInt() ).OrderBy( x => Rand.Int( 0, 100000 ) ).ToList();//GetRandomNumber( 0, image_width.CeilToInt(), image_width.CeilToInt() );
-						 
+						numbw = Enumerable.Range( 0, image_width.CeilToInt() ).OrderBy( x => Game.Random.Int( 0, 100000 ) ).ToList();//GetRandomNumber( 0, image_width.CeilToInt(), image_width.CeilToInt() );
+
 					}
-					if ( numbh.Count == 0 || numbh == null)
+					if ( numbh.Count == 0 || numbh == null )
 					{
-						numbh = Enumerable.Range( 0, image_height.CeilToInt() ).OrderBy( x => Rand.Int( 0, 100000 ) ).ToList();//GetRandomNumber( 0, image_width.CeilToInt(), image_width.CeilToInt() );
-						 
+						numbh = Enumerable.Range( 0, image_height.CeilToInt() ).OrderBy( x => Game.Random.Int( 0, 100000 ) ).ToList();//GetRandomNumber( 0, image_width.CeilToInt(), image_width.CeilToInt() );
+
 					}
 					var pixelx = numbw.First();
 					numbw.RemoveAt( 0 );
@@ -227,7 +225,7 @@ internal class MyRenderHook : RenderHook
 					int k = pixely;// Rand.Int( 0, image_height.CeilToInt() );
 					DoPixel( j, k );
 				}
-			} 
+			}
 			else
 			{
 				for ( int j = 0; j < image_width; j++ )
@@ -245,7 +243,7 @@ internal class MyRenderHook : RenderHook
 			attributes2.Set( "Texture", PrevScreen );
 			Graphics.DrawQuad( new Rect( 0, 0, Screen.Width, Screen.Height ),
 			a,
-			Color.White, attributes2 ); 
+			Color.White, attributes2 );
 		}
 	}
 	public static Color Blend( Color color, Color backColor, float amount )
@@ -266,17 +264,17 @@ internal class MyRenderHook : RenderHook
 	}
 
 	//Entity Light;
-	RTResult rt(double x, double y ) 
-	{ 
+	RTResult rt( double x, double y )
+	{
 		var u = (float)(x) / (image_width - 1);
 		var v = (float)(y) / (image_height - 1);
 
 		var dir = lower_left_corner + u * horizontal + v * vertical;
 
 		//if ( Light == null ) Light = Entity.All.OfType<SpotLightEntity>().First();
-		var rot = Map.Camera.Rotation;
-		var trn = new Transform( Map.Camera.Position, rot.RotateAroundAxis( Vector3.Left, -90 ).RotateAroundAxis( Vector3.Up, -90 ) );
-		var ray = new Ray( Map.Camera.Position, trn.NormalToWorld( dir ) );
+		var rot = Camera.Rotation;
+		var trn = new Transform( Camera.Position, rot.RotateAroundAxis( Vector3.Left, -90 ).RotateAroundAxis( Vector3.Up, -90 ) );
+		var ray = new Ray( Camera.Position, trn.NormalToWorld( dir ) );
 
 		var tr = DoRay( ray );
 
@@ -287,7 +285,7 @@ internal class MyRenderHook : RenderHook
 
 		//myColour = new Color( tr.Normal.x, tr.Normal.y, tr.Normal.z );
 
-		return new RTResult( tr, myColour ); 
+		return new RTResult( tr, myColour );
 	}
 	Vector3 random_in_unit_sphere()
 	{
@@ -298,9 +296,10 @@ internal class MyRenderHook : RenderHook
 			return p;
 		}
 	}
-	Vector3 random_in_hemisphere( Vector3 normal ) {
+	Vector3 random_in_hemisphere( Vector3 normal )
+	{
 		Vector3 in_unit_sphere = random_in_unit_sphere();
-		if ( Vector3.Dot( in_unit_sphere, normal) > 0.0) // In the same hemisphere as the normal
+		if ( Vector3.Dot( in_unit_sphere, normal ) > 0.0 ) // In the same hemisphere as the normal
 			return in_unit_sphere;
 		else
 			return -in_unit_sphere;
@@ -308,11 +307,11 @@ internal class MyRenderHook : RenderHook
 	TraceResult DoRay( Ray ray, float distch = 0 )
 	{
 		int scale = 3;
-		var tr1 = Trace.Ray( ray, MAX_DIST - distch ).WithoutTags("playerclip", "clip");
+		var tr1 = Trace.Ray( ray, MAX_DIST - distch ).WithoutTags( "playerclip", "clip" );
 		//if (ent != null) { tr1 = tr1.Ignore( ent ); }
 		var tr = tr1.Run();
 		if ( !tr.Hit ) return tr;
-		
+
 
 		//var tr3 = Trace.Ray( source, tr.EndPosition ).WithoutTags( "player" ).WithoutTags( "glass" ).Run();
 		//if ( tr3.Fraction != 1 ) return tr;
@@ -320,7 +319,7 @@ internal class MyRenderHook : RenderHook
 		//myColour = myColour.WithAlphaMultiplied( dist );
 		//myColour = myColour.WithAlphaMultiplied( tr3.Fraction );
 
-		
+
 
 		//PrevScreen.Update( sp, (b.x * Screen.Width).FloorToInt(), (b.y * PrevScreen.Height).FloorToInt(), scale, scale);
 		return tr;
@@ -332,13 +331,13 @@ internal class MyRenderHook : RenderHook
 
 		return ((y * Tex.Width) + x) * 4;
 	}
-	Color GetColour(TraceResult tr, int depth )
+	Color GetColour( TraceResult tr, int depth )
 	{
 
 		var surf = tr.Surface.ResourceName;
-		if ( tr.Hit && tr.Entity.Tags.Has("emit") )
-		{ 
-			return new Color( 10000.0f ); 
+		if ( tr.Hit && tr.Entity.Tags.Has( "emit" ) )
+		{
+			return new Color( 10000.0f );
 		}
 		var t = 0.5f * (tr.Direction.z + 1.0f);
 		var clrv = ((1.0f - t) * new Vector3( 1.0f, 1.0f, 1.0f ) + t * new Vector3( 0.5f, 0.7f, 1.0f )).Clamp( -1, 1 );
@@ -378,11 +377,11 @@ internal class MyRenderHook : RenderHook
 		{
 
 			Vector3 target = tr.HitPosition + tr.Normal + random_in_unit_sphere();//Vector3.Random;//random_in_hemisphere( tr.Normal);
-			if (surf == "metal" || surf == "metal.sheet" || surf == "glass")
+			if ( surf == "metal" || surf == "metal.sheet" || surf == "glass" )
 			{
-				target = tr.HitPosition + reflect(tr.Direction, tr.Normal);
-			} 
-			var trgclr = Blend(Color.Black, GetColour( DoRay(new Ray( tr.HitPosition, target - tr.HitPosition ), (tr.Distance/4)), depth - 1), 0.5f);
+				target = tr.HitPosition + reflect( tr.Direction, tr.Normal );
+			}
+			var trgclr = Blend( Color.Black, GetColour( DoRay( new Ray( tr.HitPosition, target - tr.HitPosition ), (tr.Distance / 4) ), depth - 1 ), 0.5f );
 			var attenuation = myColour;
 			return BlendMult( trgclr, attenuation );
 		}
