@@ -1,4 +1,4 @@
-﻿namespace Sandbox;
+﻿using Sandbox;
 partial class Pawn
 {
 	void PawnMovement()

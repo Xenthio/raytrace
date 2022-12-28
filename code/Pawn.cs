@@ -1,6 +1,6 @@
-﻿namespace Sandbox;
+﻿using Sandbox;
 
-partial class Pawn : AnimatedEntity
+public partial class Pawn : AnimatedEntity
 {
 	/// <summary>
 	/// Called from the gamemode, clientside only.
